@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#11201C">
+<meta name="description" content="zikru.my ialah webapp zikir harian dengan kaunter umum, target khusus, wirid berkumpulan, tema siang/malam, dan simpanan offline.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="zikru">
+<title>zikru.my - Zikir Harian</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="./assets/index-CvNlnFA7.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-BA93xwGf.css">
+</head>
+<body>
+
+<div class="device">
+
+  <!-- SCREEN 1: ZIKIR UMUM -->
+  <div class="screen active" id="screen-umum">
+    <header class="topbar">
+      <div class="wordmark">zik<span>ru</span></div>
+      <div class="header-actions">
+        <button class="icon-btn theme-toggle" aria-label="Tukar mood siang/malam">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        </button>
+        <button class="icon-btn mute-btn" aria-label="Bunyi">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19 5a9 9 0 010 14M15.5 8.5a5 5 0 010 7"/></svg>
+        </button>
+        <button class="icon-btn settings-btn" aria-label="Tetapan">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 005 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 5c.14 0 .27 0 .4 0A1.65 1.65 0 0011 3.51V3a2 2 0 014 0v.09c0 .69.4 1.32 1 1.6.14.05.27.09.4.09a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9c0 .14 0 .27 0 .4.28.6.91 1 1.6 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="tap-wrap">
+      <div class="toast" id="resetToast">Disetkan semula</div>
+      <div class="bead-ring" id="beadRingUmum"></div>
+      <button class="tap-circle" id="tapCircle" type="button">
+        <span class="hold-ring" aria-hidden="true"></span>
+        <span class="count-num" id="countNum">0</span>
+        <span class="count-label">kali</span>
+      </button>
+    </div>
+
+    <div class="hint">Tahan lama untuk set semula</div>
+
+    <div class="bottomnav">
+      <div class="navitem active" data-target="screen-umum"><span class="dot"></span>Umum</div>
+      <div class="navitem" data-target="screen-khusus"><span class="dot"></span>Khusus</div>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: ZIKIR KHUSUS -->
+  <div class="screen" id="screen-khusus">
+    <div class="stars"></div>
+    <header class="topbar">
+      <div class="wordmark">zik<span>ru</span></div>
+      <div class="header-actions">
+        <button class="icon-btn theme-toggle" aria-label="Tukar mood siang/malam">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        </button>
+        <button class="icon-btn mute-btn" aria-label="Bunyi">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19 5a9 9 0 010 14M15.5 8.5a5 5 0 010 7"/></svg>
+        </button>
+      </div>
+    </header>
+    <div class="target-select" id="targetSelect">
+      <span class="tname" id="targetName">Selawat</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="step-indicator" id="stepIndicator"></div>
+
+    <div class="ring-wrap">
+      <div class="toast" id="wiridToast"></div>
+      <div class="progress-ring">
+        <svg viewBox="0 0 250 250" id="ringSvg"></svg>
+        <button class="ring-center" id="ringCenter" type="button" aria-label="Tambah kiraan">
+          <div id="ringLive">
+            <div class="ring-current" id="ringCurrent">412</div>
+            <div class="ring-target" id="ringTarget">/ 1000</div>
+          </div>
+          <div class="ring-done" id="ringDone">
+            <div class="check">✓</div>
+            <div class="label" id="ringDoneLabel">Selesai — Alhamdulillah</div>
+          </div>
+          <div class="ring-step-done" id="ringStepDone">
+            <div class="check">✓</div>
+            <div class="label" id="ringStepDoneLabel">Subhanallah selesai</div>
+            <div class="tap-hint">Tap untuk sambung</div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <div class="subhint">Reset automatik selepas waktu Subuh</div>
+
+    <div class="target-list" id="targetList"></div>
+
+    <div class="sheet-overlay" id="sheetOverlay">
+      <div class="sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-title" id="sheetTitle">Tambah Target</div>
+
+        <div class="type-toggle" id="typeToggle">
+          <button type="button" class="type-opt active" data-type="simple">Target Tunggal</button>
+          <button type="button" class="type-opt" data-type="wirid">Wirid (Berkumpulan)</button>
+        </div>
+
+        <!-- SIMPLE: contoh Selawat 1000x/hari -->
+        <div id="simpleFields">
+          <div class="field-label">Nama zikir</div>
+          <div class="preset-chips" id="presetChips">
+            <div class="preset-chip" data-name="Selawat">Selawat</div>
+            <div class="preset-chip" data-name="Istighfar">Istighfar</div>
+            <div class="preset-chip" data-name="Subhanallah">Subhanallah</div>
+            <div class="preset-chip" data-name="Tahmid">Tahmid</div>
+            <div class="preset-chip" data-name="Tahlil">Tahlil</div>
+          </div>
+          <input type="text" class="sheet-input" id="sheetNameInput" placeholder="Atau taip nama sendiri" maxlength="24">
+
+          <div class="field-label">Target bilangan</div>
+          <div class="quick-numbers" id="quickNumbers">
+            <div class="quick-num" data-num="33">33</div>
+            <div class="quick-num" data-num="99">99</div>
+            <div class="quick-num" data-num="100">100</div>
+            <div class="quick-num" data-num="1000">1000</div>
+          </div>
+          <input type="number" inputmode="numeric" class="sheet-input num-input" id="sheetNumInput" placeholder="0" min="1">
+        </div>
+
+        <!-- WIRID: contoh Wirid Pagi -> beberapa zikir -->
+        <div id="wiridFields" style="display:none;">
+          <div class="field-label">Nama wirid</div>
+          <input type="text" class="sheet-input" id="wiridNameInput" placeholder="Contoh: Wirid Pagi" maxlength="24">
+
+          <div class="field-label">Senarai zikir dalam wirid ni</div>
+          <div id="wiridItemsList"></div>
+          <button type="button" class="btn-add-item" id="addWiridItem">+ Tambah zikir</button>
+        </div>
+
+        <div class="sheet-actions">
+          <button class="btn-ghost" id="sheetCancel">Batal</button>
+          <button class="btn-ghost btn-danger" id="sheetDelete" style="display:none;">Padam</button>
+          <button class="btn-primary" id="sheetSave">Simpan</button>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="bottomnav">
+      <div class="navitem" data-target="screen-umum"><span class="dot"></span>Umum</div>
+      <div class="navitem active" data-target="screen-khusus"><span class="dot"></span>Khusus</div>
+    </div>
+  </div>
+
+  <div class="settings-overlay" id="settingsOverlay">
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title" id="settingsTitle">Tetapan</div>
+
+      <div class="settings-row">
+        <div>
+          <div class="field-label">Bunyi</div>
+          <div class="settings-copy">Hidupkan atau matikan bunyi.</div>
+        </div>
+        <button type="button" class="icon-btn settings-sound-toggle" id="settingsSoundToggle" aria-pressed="false" aria-label="Tukar bunyi">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19 5a9 9 0 010 14M15.5 8.5a5 5 0 010 7"/></svg>
+        </button>
+      </div>
+
+      <div class="settings-row">
+        <div>
+          <div class="field-label">Getar</div>
+          <div class="settings-copy">Benarkan getaran pada tap dan milestone.</div>
+        </div>
+        <button type="button" class="icon-btn settings-vibrate-toggle" id="settingsVibrateToggle" aria-pressed="true" aria-label="Tukar getaran">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="4" width="10" height="16" rx="2"/><path d="M4 8v8M20 8v8M2 10v4M22 10v4"/></svg>
+        </button>
+      </div>
+
+      <div class="field-label">Tema App</div>
+      <div class="theme-swatches">
+        <button type="button" class="theme-swatch" data-app-theme="forest" aria-label="Tema Forest" title="Forest"></button>
+        <button type="button" class="theme-swatch" data-app-theme="midnight" aria-label="Tema Midnight" title="Midnight"></button>
+        <button type="button" class="theme-swatch" data-app-theme="mineral" aria-label="Tema Mineral" title="Mineral"></button>
+        <button type="button" class="theme-swatch" data-app-theme="maroon" aria-label="Tema Maroon" title="Maroon"></button>
+        <button type="button" class="theme-swatch" data-app-theme="olive" aria-label="Tema Olive" title="Olive"></button>
+      </div>
+
+      <div class="settings-actions">
+        <button type="button" class="btn-ghost btn-danger" id="settingsResetBtn">Reset semua data</button>
+        <button type="button" class="btn-ghost" id="settingsCloseBtn">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
