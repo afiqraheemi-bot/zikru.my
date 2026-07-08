@@ -1,0 +1,20 @@
+{
+  "name": "zikru.my - Zikir Harian",
+  "short_name": "zikru",
+  "description": "Kaunter zikir harian dengan target khusus, wirid berkumpulan, simpanan offline, dan tema siang/malam.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#11201C",
+  "theme_color": "#11201C",
+  "orientation": "portrait",
+  "lang": "ms",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

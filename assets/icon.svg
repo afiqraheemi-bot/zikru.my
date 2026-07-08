@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="zikru">
+  <rect width="512" height="512" rx="112" fill="#11201C"/>
+  <circle cx="256" cy="256" r="168" fill="none" stroke="#C4923D" stroke-width="18" stroke-dasharray="18 22"/>
+  <circle cx="256" cy="256" r="104" fill="#1B2E28" stroke="#C4923D" stroke-width="8"/>
+  <path d="M322 160a86 86 0 1 0 0 192 112 112 0 1 1 0-192Z" fill="#ECE6D6"/>
+  <circle cx="320" cy="256" r="14" fill="#C4923D"/>
+</svg>
