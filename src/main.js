@@ -146,6 +146,14 @@ function beepReset(){ beep(320, 0.15, 0.12, 'sine'); }
 function beepStepDone(){ beep(700, 0.08, 0.13, 'sine'); }
 function beepTargetDone(){ beep(660, 0.1, 0.16, 'triangle'); setTimeout(()=>beep(990, 0.14, 0.16, 'triangle'), 100); }
 
+function tapFeedback(el){
+  if(!el) return;
+  el.classList.remove('tap-feedback');
+  void el.offsetWidth;
+  el.classList.add('tap-feedback');
+  setTimeout(()=>el.classList.remove('tap-feedback'), 140);
+}
+
 // ---------- ZIKIR UMUM ----------
 
 let count = (!isNewDay && SAVED && typeof SAVED.count === 'number') ? SAVED.count : 0;
@@ -392,12 +400,15 @@ document.getElementById('targetSelect').addEventListener('click', ()=>{
 });
 
 document.getElementById('ringCenter').addEventListener('click', ()=>{
+  const ringCenter = document.getElementById('ringCenter');
   const t = targets[activeIdx];
 
   // Ada zikir yang baru selesai, menunggu pengesahan — tap ni cuma sambung, TAK dikira
   if(t.type === 'wirid' && t.pendingConfirm != null){
     t.pendingConfirm = null;
     vibrate(8);
+    if(!muted) beepTick();
+    tapFeedback(ringCenter);
     renderRing();
     saveState();
     return;
@@ -408,6 +419,8 @@ document.getElementById('ringCenter').addEventListener('click', ()=>{
 
   item.current++;
   vibrate(12);
+  if(!muted) beepTick();
+  tapFeedback(ringCenter);
 
   if(item.current >= item.target){
     if(t.type === 'wirid' && wiridDoneCount(t) < t.items.length){
