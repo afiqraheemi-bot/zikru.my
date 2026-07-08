@@ -20,8 +20,8 @@
     --parchment:#20302A;
     --parchment-dim:rgba(32,48,42,0.58);
     --parchment-faint:rgba(32,48,42,0.08);
-    --gold:#A9761F;
-    --gold-glow:rgba(169,118,31,0.25);
+    --gold:#C4923D;
+    --gold-glow:rgba(196,146,61,0.28);
     --sage:#8FA48F;
     --sage-dim:#CDD8C6;
     --divider:rgba(32,48,42,0.1);
@@ -93,18 +93,18 @@
   .settings-copy{ color:var(--parchment-dim); font-size:12.5px; line-height:1.4; }
   .settings-actions{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:18px; }
 
-  /* Accent swatches in settings */
-  .accent-swatches{ display:flex; gap:10px; align-items:center; margin-bottom:14px; }
-  .accent-swatch{
+  /* Theme swatches in settings. Gold remains the fixed premium accent. */
+  .theme-swatches{ display:flex; gap:10px; align-items:center; margin-bottom:14px; }
+  .theme-swatch{
     width:36px; height:36px; border-radius:10px; border:2px solid rgba(255,255,255,0.06);
     box-shadow:0 6px 18px rgba(0,0,0,0.3); cursor:pointer; flex:0 0 auto;
   }
-  .accent-swatch[data-accent="gold"]{ background:#C4923D; }
-  .accent-swatch[data-accent="copper"]{ background:#B65A2E; }
-  .accent-swatch[data-accent="teal"]{ background:#1FA3A3; }
-  .accent-swatch[data-accent="indigo"]{ background:#5B4BC0; }
-  .accent-swatch[data-accent="olive"]{ background:#8AA05A; }
-  .accent-swatch.selected{ outline:3px solid rgba(255,255,255,0.08); transform:translateY(-2px); }
+  .theme-swatch[data-app-theme="forest"]{ background:linear-gradient(135deg,#11201C 0 48%,#3C5148 48%); }
+  .theme-swatch[data-app-theme="midnight"]{ background:linear-gradient(135deg,#101820 0 48%,#3D5263 48%); }
+  .theme-swatch[data-app-theme="mineral"]{ background:linear-gradient(135deg,#151D1F 0 48%,#46595B 48%); }
+  .theme-swatch[data-app-theme="maroon"]{ background:linear-gradient(135deg,#201416 0 48%,#5A3F43 48%); }
+  .theme-swatch[data-app-theme="olive"]{ background:linear-gradient(135deg,#191D13 0 48%,#4C5837 48%); }
+  .theme-swatch.selected{ outline:3px solid rgba(196,146,61,0.28); transform:translateY(-2px); }
   .sheet-handle{ width:36px; height:4px; border-radius:4px; background:var(--card-border); margin:0 auto 16px; }
   .sheet-title{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:17px; color:var(--parchment); margin-bottom:16px; }
   .type-toggle{ display:flex; gap:8px; margin-bottom:18px; }

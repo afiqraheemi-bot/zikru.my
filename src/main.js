@@ -28,7 +28,7 @@ function saveState(){
   try{
     localStorage.setItem('zikru-v1', JSON.stringify({
       dayKey: currentDayKey(),
-      count, targets, mood, muted, vibrateEnabled, accent
+      count, targets, mood, muted, vibrateEnabled, appTheme
     }));
   }catch(e){ /* storan disekat (contoh: preview) — app tetap jalan, cuma tak kekal */ }
 }
@@ -48,7 +48,48 @@ function applyMood(){
     const stars = document.querySelector('.stars');
     if(stars) stars.style.opacity = mood === 'day' ? '0' : '1';
   }catch(e){}
+  applyAppTheme(appTheme);
 }
+// ---------- App theme colors. Gold stays premium and unchanged. ----------
+const APP_THEMES = {
+  forest: {
+    night: { ink:'#11201C', inkElev:'#1B2E28', inkElev2:'#213730', sage:'#3C5148', sageDim:'#243830', body:'#0A1512' },
+    day: { ink:'#E9EDE4', inkElev:'#DEE4D6', inkElev2:'#D2DAC7', sage:'#8FA48F', sageDim:'#CDD8C6', body:'#D6DED2' },
+  },
+  midnight: {
+    night: { ink:'#101820', inkElev:'#18242E', inkElev2:'#213141', sage:'#3D5263', sageDim:'#243341', body:'#081017' },
+    day: { ink:'#E8EDF2', inkElev:'#DCE4EB', inkElev2:'#CDD8E2', sage:'#8D9DAA', sageDim:'#C8D4DE', body:'#D4DDE6' },
+  },
+  mineral: {
+    night: { ink:'#151D1F', inkElev:'#202B2D', inkElev2:'#2A383A', sage:'#46595B', sageDim:'#2C3A3C', body:'#0D1314' },
+    day: { ink:'#E8EBE8', inkElev:'#DDE2DF', inkElev2:'#D0D8D4', sage:'#8C9B96', sageDim:'#C9D1CC', body:'#D5DCD8' },
+  },
+  maroon: {
+    night: { ink:'#201416', inkElev:'#2D1D20', inkElev2:'#3A2529', sage:'#5A3F43', sageDim:'#3B282C', body:'#150C0E' },
+    day: { ink:'#EFE7E4', inkElev:'#E6DAD6', inkElev2:'#DBCBC6', sage:'#A48D88', sageDim:'#D8CAC5', body:'#E1D5D0' },
+  },
+  olive: {
+    night: { ink:'#191D13', inkElev:'#252B1D', inkElev2:'#303824', sage:'#4C5837', sageDim:'#303824', body:'#10130C' },
+    day: { ink:'#EBECE2', inkElev:'#E1E4D5', inkElev2:'#D3D8C2', sage:'#99A37F', sageDim:'#D0D6BF', body:'#DADDCB' },
+  },
+};
+let appTheme = (SAVED && SAVED.appTheme) ? SAVED.appTheme : 'forest';
+function applyAppTheme(theme){
+  if(!APP_THEMES[theme]) theme = 'forest';
+  appTheme = theme;
+  const palette = APP_THEMES[theme][mood === 'day' ? 'day' : 'night'];
+  deviceEl.style.setProperty('--ink', palette.ink);
+  deviceEl.style.setProperty('--ink-elev', palette.inkElev);
+  deviceEl.style.setProperty('--ink-elev-2', palette.inkElev2);
+  deviceEl.style.setProperty('--sage', palette.sage);
+  deviceEl.style.setProperty('--sage-dim', palette.sageDim);
+  document.body.style.backgroundColor = palette.body;
+
+  document.querySelectorAll('.theme-swatch').forEach(btn=>{
+    btn.classList.toggle('selected', btn.dataset.appTheme === appTheme);
+  });
+}
+applyAppTheme(appTheme);
 document.querySelectorAll('.theme-toggle').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     mood = mood === 'night' ? 'day' : 'night';
@@ -58,28 +99,6 @@ document.querySelectorAll('.theme-toggle').forEach(btn=>{
   });
 });
 applyMood();
-
-// ---------- Accent colors (user-selectable, non-intrusive) ----------
-const ACCENTS = {
-  gold: { color:'#C4923D', glow:'rgba(196,146,61,0.35)' },
-  copper: { color:'#B65A2E', glow:'rgba(182,90,46,0.28)' },
-  teal: { color:'#1FA3A3', glow:'rgba(31,163,163,0.22)' },
-  indigo: { color:'#5B4BC0', glow:'rgba(91,75,192,0.18)' },
-  olive: { color:'#8AA05A', glow:'rgba(138,160,90,0.22)' },
-};
-let accent = (SAVED && SAVED.accent) ? SAVED.accent : 'gold';
-function applyAccent(a){
-  if(!ACCENTS[a]) a='gold';
-  accent = a;
-  const v = ACCENTS[a];
-  document.documentElement.style.setProperty('--gold', v.color);
-  document.documentElement.style.setProperty('--gold-glow', v.glow);
-  // update swatch UI if present
-  document.querySelectorAll('.accent-swatch').forEach(btn=>{
-    btn.classList.toggle('selected', btn.dataset.accent === accent);
-  });
-}
-applyAccent(accent);
 
 // ---------- Nav switching ----------
 document.querySelectorAll('.navitem').forEach(item=>{
@@ -497,11 +516,10 @@ if(settingsResetBtn){
   });
 }
 
-// Accent swatch handlers
-document.querySelectorAll('.accent-swatch').forEach(btn=>{
+// App theme swatch handlers
+document.querySelectorAll('.theme-swatch').forEach(btn=>{
   btn.addEventListener('click', ()=>{
-    const a = btn.dataset.accent;
-    applyAccent(a);
+    applyAppTheme(btn.dataset.appTheme);
     saveState();
   });
 });
