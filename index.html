@@ -28,7 +28,10 @@
         <button class="icon-btn theme-toggle" aria-label="Tukar mood siang/malam">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
         </button>
-        <button class="icon-btn" aria-label="Tetapan">
+        <button class="icon-btn mute-btn" aria-label="Bunyi">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19 5a9 9 0 010 14M15.5 8.5a5 5 0 010 7"/></svg>
+        </button>
+        <button class="icon-btn settings-btn" aria-label="Tetapan">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 005 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 5c.14 0 .27 0 .4 0A1.65 1.65 0 0011 3.51V3a2 2 0 014 0v.09c0 .69.4 1.32 1 1.6.14.05.27.09.4.09a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9c0 .14 0 .27 0 .4.28.6.91 1 1.6 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
         </button>
       </div>
@@ -61,12 +64,11 @@
         <button class="icon-btn theme-toggle" aria-label="Tukar mood siang/malam">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
         </button>
-        <button class="icon-btn" id="muteBtn" aria-label="Bunyi">
+        <button class="icon-btn mute-btn" aria-label="Bunyi">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19 5a9 9 0 010 14M15.5 8.5a5 5 0 010 7"/></svg>
         </button>
       </div>
     </header>
-
     <div class="target-select" id="targetSelect">
       <span class="tname" id="targetName">Selawat</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg>
@@ -156,7 +158,48 @@
     </div>
   </div>
 
+  <div class="settings-overlay" id="settingsOverlay">
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title" id="settingsTitle">Tetapan</div>
+
+      <div class="settings-row">
+        <div>
+          <div class="field-label">Bunyi</div>
+          <div class="settings-copy">Hidupkan atau matikan bunyi.</div>
+        </div>
+        <button type="button" class="icon-btn settings-sound-toggle" id="settingsSoundToggle" aria-pressed="false" aria-label="Tukar bunyi">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19 5a9 9 0 010 14M15.5 8.5a5 5 0 010 7"/></svg>
+        </button>
+      </div>
+
+      <div class="settings-row">
+        <div>
+          <div class="field-label">Getar</div>
+          <div class="settings-copy">Benarkan getaran pada tap dan milestone.</div>
+        </div>
+        <button type="button" class="icon-btn settings-vibrate-toggle" id="settingsVibrateToggle" aria-pressed="true" aria-label="Tukar getaran">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="4" width="10" height="16" rx="2"/><path d="M4 8v8M20 8v8M2 10v4M22 10v4"/></svg>
+        </button>
+      </div>
+
+      <div class="field-label">Warna Aksen</div>
+      <div class="accent-swatches">
+        <button type="button" class="accent-swatch" data-accent="gold" aria-label="Aksen Emas" title="Asal (Emas)"></button>
+        <button type="button" class="accent-swatch" data-accent="copper" aria-label="Aksen Tembaga" title="Tembaga"></button>
+        <button type="button" class="accent-swatch" data-accent="teal" aria-label="Aksen Teal" title="Teal"></button>
+        <button type="button" class="accent-swatch" data-accent="indigo" aria-label="Aksen Indigo" title="Indigo"></button>
+        <button type="button" class="accent-swatch" data-accent="olive" aria-label="Aksen Olive" title="Olive"></button>
+      </div>
+
+      <div class="settings-actions">
+        <button type="button" class="btn-ghost btn-danger" id="settingsResetBtn">Reset semua data</button>
+        <button type="button" class="btn-ghost" id="settingsCloseBtn">Tutup</button>
+      </div>
+    </div>
+  </div>
+
 </div>
-<script type="module" src="/src/main.js"></script>
+<script type="module" src="src/main.js"></script>
 </body>
 </html>

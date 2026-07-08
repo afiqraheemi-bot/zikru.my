@@ -24,7 +24,7 @@ ZIKRU.my is a mobile-first static PWA. It is intentionally small so it can be ho
 - Daily state is stored in `localStorage` under `zikru-v1`.
 - Current daily reset uses a fixed `RESET_HOUR` of 6am. A future backend or prayer-time provider can replace this with zone-aware Subuh timing.
 - The service worker caches the app shell and then opportunistically caches fetched assets.
-- GitHub Pages deployment is handled by `.github/workflows/deploy-pages.yml`.
+- GitHub Pages deployment uses the production artifact published to the `gh-pages` branch.
 
 ## Quality gate
 

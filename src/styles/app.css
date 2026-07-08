@@ -80,6 +80,31 @@
     box-shadow:0 -20px 50px rgba(0,0,0,0.35);
   }
   .sheet-overlay.open .sheet{ transform:translateY(0); }
+
+  /* Settings overlay (reuses sheet styling) */
+  .settings-overlay{ position:absolute; inset:0; background:rgba(0,0,0,0.45); opacity:0; pointer-events:none; transition:opacity 0.25s ease; z-index:25; }
+  .settings-overlay.open{ opacity:1; pointer-events:auto; }
+  .settings-overlay.open .sheet{ transform:translateY(0); }
+  .settings-overlay .sheet{ width:100%; max-width:560px; margin:0 auto; }
+  .settings-row{
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    padding:10px 0 14px; border-bottom:1px solid var(--divider); margin-bottom:10px;
+  }
+  .settings-copy{ color:var(--parchment-dim); font-size:12.5px; line-height:1.4; }
+  .settings-actions{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:18px; }
+
+  /* Accent swatches in settings */
+  .accent-swatches{ display:flex; gap:10px; align-items:center; margin-bottom:14px; }
+  .accent-swatch{
+    width:36px; height:36px; border-radius:10px; border:2px solid rgba(255,255,255,0.06);
+    box-shadow:0 6px 18px rgba(0,0,0,0.3); cursor:pointer; flex:0 0 auto;
+  }
+  .accent-swatch[data-accent="gold"]{ background:#C4923D; }
+  .accent-swatch[data-accent="copper"]{ background:#B65A2E; }
+  .accent-swatch[data-accent="teal"]{ background:#1FA3A3; }
+  .accent-swatch[data-accent="indigo"]{ background:#5B4BC0; }
+  .accent-swatch[data-accent="olive"]{ background:#8AA05A; }
+  .accent-swatch.selected{ outline:3px solid rgba(255,255,255,0.08); transform:translateY(-2px); }
   .sheet-handle{ width:36px; height:4px; border-radius:4px; background:var(--card-border); margin:0 auto 16px; }
   .sheet-title{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:17px; color:var(--parchment); margin-bottom:16px; }
   .type-toggle{ display:flex; gap:8px; margin-bottom:18px; }
@@ -179,7 +204,7 @@
     transform-origin:0 0;
   }
   .tap-circle{
-    width:clamp(176px, 56vw, 220px); height:clamp(176px, 56vw, 220px); border-radius:50%;
+    width:clamp(192px, 58vw, 240px); height:clamp(192px, 58vw, 240px); border-radius:50%;
     background:radial-gradient(circle at 35% 30%, var(--ink-elev-2), var(--ink-elev) 70%);
     border:1px solid var(--card-border);
     display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -196,6 +221,10 @@
     border:2px solid var(--gold); opacity:0; transform:scale(0.9);
     pointer-events:none;
   }
+
+  /* hide stars in day theme to keep screens visually consistent */
+  .device[data-theme="day"] .stars{ opacity:0; transition:opacity 0.35s ease; pointer-events:none; }
+  .device[data-theme="night"] .stars{ opacity:1; transition:opacity 0.35s ease; pointer-events:none; }
   .tap-circle.holding .hold-ring{
     opacity:1; transform:scale(1.05);
     transition:opacity 0.55s linear, transform 0.55s linear;

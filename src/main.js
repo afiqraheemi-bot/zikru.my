@@ -28,7 +28,7 @@ function saveState(){
   try{
     localStorage.setItem('zikru-v1', JSON.stringify({
       dayKey: currentDayKey(),
-      count, targets, mood, muted
+      count, targets, mood, muted, vibrateEnabled, accent
     }));
   }catch(e){ /* storan disekat (contoh: preview) — app tetap jalan, cuma tak kekal */ }
 }
@@ -44,6 +44,10 @@ function applyMood(){
   document.querySelectorAll('.theme-toggle svg').forEach(svg=>{
     svg.innerHTML = mood === 'day' ? SUN : MOON;
   });
+  try{
+    const stars = document.querySelector('.stars');
+    if(stars) stars.style.opacity = mood === 'day' ? '0' : '1';
+  }catch(e){}
 }
 document.querySelectorAll('.theme-toggle').forEach(btn=>{
   btn.addEventListener('click', ()=>{
@@ -55,6 +59,28 @@ document.querySelectorAll('.theme-toggle').forEach(btn=>{
 });
 applyMood();
 
+// ---------- Accent colors (user-selectable, non-intrusive) ----------
+const ACCENTS = {
+  gold: { color:'#C4923D', glow:'rgba(196,146,61,0.35)' },
+  copper: { color:'#B65A2E', glow:'rgba(182,90,46,0.28)' },
+  teal: { color:'#1FA3A3', glow:'rgba(31,163,163,0.22)' },
+  indigo: { color:'#5B4BC0', glow:'rgba(91,75,192,0.18)' },
+  olive: { color:'#8AA05A', glow:'rgba(138,160,90,0.22)' },
+};
+let accent = (SAVED && SAVED.accent) ? SAVED.accent : 'gold';
+function applyAccent(a){
+  if(!ACCENTS[a]) a='gold';
+  accent = a;
+  const v = ACCENTS[a];
+  document.documentElement.style.setProperty('--gold', v.color);
+  document.documentElement.style.setProperty('--gold-glow', v.glow);
+  // update swatch UI if present
+  document.querySelectorAll('.accent-swatch').forEach(btn=>{
+    btn.classList.toggle('selected', btn.dataset.accent === accent);
+  });
+}
+applyAccent(accent);
+
 // ---------- Nav switching ----------
 document.querySelectorAll('.navitem').forEach(item=>{
   item.addEventListener('click',()=>{
@@ -65,7 +91,8 @@ document.querySelectorAll('.navitem').forEach(item=>{
   });
 });
 
-function vibrate(ms){ if(navigator.vibrate) navigator.vibrate(ms); }
+let vibrateEnabled = SAVED && typeof SAVED.vibrateEnabled === 'boolean' ? SAVED.vibrateEnabled : true;
+function vibrate(ms){ if(!vibrateEnabled) return; if(navigator.vibrate) navigator.vibrate(ms); }
 
 // ---------- Bunyi (fallback untuk iOS yang tak sokong vibration) ----------
 let audioCtx = null;
@@ -128,7 +155,7 @@ function bump(){
 
   if(count % 100 === 0){
     vibrate([15,40,15,40,15]);
-    beepMilestone();
+    if(!muted) beepMilestone();
     const toast = document.getElementById('resetToast');
     const original = toast.textContent;
     toast.textContent = count.toLocaleString('ms-MY') + ' kali ✓';
@@ -139,7 +166,7 @@ function bump(){
     }, 900);
   } else {
     vibrate(12);
-    beepTick();
+    if(!muted) beepTick();
   }
   saveState();
 }
@@ -162,7 +189,7 @@ tapCircle.addEventListener('pointerdown', ()=>{
     count = 0;
     countNum.textContent = '0';
     vibrate([20,40,20]);
-    beepReset();
+    if(!muted) beepReset();
     saveState();
     const toast = document.getElementById('resetToast');
     toast.classList.add('show');
@@ -388,17 +415,95 @@ const SOUND_ON = '<path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19 5a9 9 0 010 14M
 const SOUND_OFF = '<path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M23 9l-6 6M17 9l6 6"/>';
 let muted = SAVED ? !!SAVED.muted : true; // bunyi OFF secara default — user opt-in (keputusan awal projek)
 function applyMuteIcon(){
-  const btn = document.getElementById('muteBtn');
-  const svg = btn.querySelector('svg');
-  if(svg) svg.innerHTML = muted ? SOUND_OFF : SOUND_ON;
-  btn.classList.toggle('muted', muted);
-  btn.setAttribute('aria-label', muted ? 'Bunyi dimatikan — tap untuk hidupkan' : 'Bunyi dihidupkan — tap untuk matikan');
+  const btns = document.querySelectorAll('.mute-btn');
+  btns.forEach(btn=>{
+    const svg = btn.querySelector('svg');
+    if(svg) svg.innerHTML = muted ? SOUND_OFF : SOUND_ON;
+    btn.classList.toggle('muted', muted);
+    btn.setAttribute('aria-label', muted ? 'Bunyi dimatikan — tap untuk hidupkan' : 'Bunyi dihidupkan — tap untuk matikan');
+  });
 }
 applyMuteIcon();
-document.getElementById('muteBtn').addEventListener('click', ()=>{
-  muted = !muted;
-  applyMuteIcon();
-  saveState();
+document.querySelectorAll('.mute-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    muted = !muted;
+    applyMuteIcon();
+    saveState();
+  });
+});
+
+// ---------- Settings overlay handlers ----------
+function openSettings(){
+  const overlay = document.getElementById('settingsOverlay');
+  if(!overlay) return;
+  overlay.classList.add('open');
+
+  const soundBtn = document.getElementById('settingsSoundToggle');
+  const vibBtn = document.getElementById('settingsVibrateToggle');
+  if(soundBtn){
+    soundBtn.classList.toggle('muted', muted);
+    soundBtn.setAttribute('aria-pressed', String(!muted));
+  }
+  if(vibBtn){
+    vibBtn.classList.toggle('muted', !vibrateEnabled);
+    vibBtn.setAttribute('aria-pressed', String(vibrateEnabled));
+  }
+}
+function closeSettings(){
+  const overlay = document.getElementById('settingsOverlay');
+  if(overlay) overlay.classList.remove('open');
+}
+
+document.querySelectorAll('.settings-btn').forEach(b=>{
+  b.addEventListener('click', openSettings);
+});
+const settingsCloseEl = document.getElementById('settingsCloseBtn');
+if(settingsCloseEl) settingsCloseEl.addEventListener('click', closeSettings);
+
+const settingsOverlayEl = document.getElementById('settingsOverlay');
+if(settingsOverlayEl){
+  settingsOverlayEl.addEventListener('click', (e)=>{
+    if(e.target === settingsOverlayEl) closeSettings();
+  });
+}
+
+const settingsSoundToggle = document.getElementById('settingsSoundToggle');
+if(settingsSoundToggle){
+  settingsSoundToggle.addEventListener('click', ()=>{
+    muted = !muted;
+    applyMuteIcon();
+    settingsSoundToggle.classList.toggle('muted', muted);
+    settingsSoundToggle.setAttribute('aria-pressed', String(!muted));
+    saveState();
+  });
+}
+const settingsVibrateToggle = document.getElementById('settingsVibrateToggle');
+if(settingsVibrateToggle){
+  settingsVibrateToggle.addEventListener('click', ()=>{
+    vibrateEnabled = !vibrateEnabled;
+    settingsVibrateToggle.classList.toggle('muted', !vibrateEnabled);
+    settingsVibrateToggle.setAttribute('aria-pressed', String(vibrateEnabled));
+    saveState();
+  });
+}
+
+const settingsResetBtn = document.getElementById('settingsResetBtn');
+if(settingsResetBtn){
+  settingsResetBtn.addEventListener('click', ()=>{
+    if(confirm('Reset semua data app? Ini akan padam simpanan tempatan.')){
+      localStorage.removeItem('zikru-v1');
+      location.reload();
+    }
+  });
+}
+
+// Accent swatch handlers
+document.querySelectorAll('.accent-swatch').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const a = btn.dataset.accent;
+    applyAccent(a);
+    saveState();
+  });
 });
 
 // ---------- Sheet: Tambah / Edit Target ----------

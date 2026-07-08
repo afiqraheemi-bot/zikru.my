@@ -40,11 +40,12 @@ npm run preview
 
 ## Live Deployment
 
-Production deploy berjalan melalui GitHub Actions workflow `Deploy Pages`.
+Production deploy berjalan melalui GitHub Pages daripada branch `gh-pages`.
 
-- Push ke branch `main` akan build Vite app dan deploy folder `dist` ke GitHub Pages.
+- Build Vite app menghasilkan folder `dist`.
+- Kandungan `dist` dipublish ke branch `gh-pages`.
 - Custom domain disimpan di `public/CNAME` sebagai `zikru.my`.
-- Pastikan GitHub Pages repo diset kepada source `GitHub Actions`.
+- Pastikan GitHub Pages repo diset kepada source branch `gh-pages` dan folder `/root`.
 - Pastikan DNS domain `zikru.my` menghala ke GitHub Pages.
 
 ## Architecture
