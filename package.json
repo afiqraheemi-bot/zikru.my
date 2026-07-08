@@ -1,0 +1,20 @@
+{
+  "$schema": "https://www.schemastore.org/package.json",
+  "name": "zikru.my",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Mobile-first PWA for daily dhikr counting and wirid tracking.",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "check": "npm run build"
+  },
+  "devDependencies": {
+    "vite": "^7.0.7"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}

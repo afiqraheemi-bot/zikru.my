@@ -1,6 +1,8 @@
 # zikru.my
 
-Webapp zikir harian ringkas untuk mobile:
+Mobile-first PWA untuk zikir harian, target khusus, dan wirid berkumpulan.
+
+## Features
 
 - Kaunter zikir umum.
 - Target zikir khusus.
@@ -8,14 +10,34 @@ Webapp zikir harian ringkas untuk mobile:
 - Simpanan harian melalui `localStorage`.
 - Reset harian selepas jam 6 pagi.
 - Tema siang/malam, getaran, dan bunyi pilihan.
-- PWA asas dengan manifest dan service worker.
+- PWA installable dengan manifest dan service worker.
 
-## Jalankan
+## Tech stack
+
+- Vite
+- Vanilla JavaScript
+- CSS modular di `src/styles`
+- Static PWA assets di `public`
+
+## Development
 
 ```bash
-python3 -m http.server 5173
+npm install
+npm run dev
 ```
 
-Buka `http://localhost:5173`.
+Build production:
 
-Untuk deploy, host folder ini sebagai static site.
+```bash
+npm run build
+```
+
+Preview production build:
+
+```bash
+npm run preview
+```
+
+## Architecture
+
+Lihat [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
