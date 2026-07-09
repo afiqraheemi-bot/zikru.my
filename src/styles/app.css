@@ -29,7 +29,7 @@
   }
   .device, .device *{ transition:background-color var(--theme-icon-transition), color var(--theme-icon-transition), border-color var(--theme-icon-transition), fill var(--theme-icon-transition), box-shadow var(--theme-icon-transition); }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{margin:0;padding:0;background:#0A1512;}
+  html,body{margin:0;padding:0;background:#0A1512; height:100%; overflow:hidden;}
   body{
     font-family:'Manrope',sans-serif;
     display:flex; justify-content:center; align-items:flex-start;
@@ -370,13 +370,21 @@
   @media (max-width: 480px){
     body{ padding:0; }
     .device{
-      max-width:none; border-radius:0; min-height:100vh; min-height:100dvh;
+      max-width:none; border-radius:0; height:100vh; height:100dvh;
       box-shadow:none;
     }
     .screen{ padding-top: calc(16px + env(safe-area-inset-top)); }
     .bottomnav{ padding-bottom: calc(14px + env(safe-area-inset-bottom)); }
     .sheet{ padding-bottom: calc(26px + env(safe-area-inset-bottom)); }
   }
+
+  /* ---------- Swipe navigation (Umum <-> Khusus) ---------- */
+  .device.nav-transitioning .screen{
+    position:absolute; inset:0; display:flex;
+    transition:transform 0.32s cubic-bezier(.22,.68,0,1.01);
+  }
+  .nav-slide-left{ transform:translateX(-100%); }
+  .nav-slide-right{ transform:translateX(100%); }
 
   /* Skrin sempit (contoh: iPhone SE, Android kecil ~360px dan bawah) —
      bead-ring hiasan discale supaya tak sesak dengan tap-circle */

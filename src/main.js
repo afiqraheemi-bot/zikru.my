@@ -102,12 +102,13 @@ document.querySelectorAll('.theme-toggle').forEach(btn=>{
 applyMood();
 
 // ---------- Nav switching ----------
+function setActiveNavItem(targetId){
+  document.querySelectorAll('.navitem').forEach(i=> i.classList.toggle('active', i.dataset.target === targetId));
+}
 document.querySelectorAll('.navitem').forEach(item=>{
-  item.addEventListener('click',()=>{
-    document.querySelectorAll('.navitem').forEach(i=>i.classList.remove('active'));
-    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-    document.querySelectorAll(`[data-target="${item.dataset.target}"]`).forEach(i=>i.classList.add('active'));
-    document.getElementById(item.dataset.target).classList.add('active');
+  item.addEventListener('click', ()=>{
+    setActiveNavItem(item.dataset.target);
+    document.querySelectorAll('.screen').forEach(s=> s.classList.toggle('active', s.id === item.dataset.target));
   });
 });
 
@@ -161,7 +162,7 @@ let count = (!isNewDay && SAVED && typeof SAVED.count === 'number') ? SAVED.coun
 const countNum = document.getElementById('countNum');
 countNum.textContent = count.toLocaleString('ms-MY');
 const tapCircle = document.getElementById('tapCircle');
-let pressTimer = null; let longPressed = false;
+let pressTimer = null; let longPressed = false; let gestureSwiped = false;
 
 // decorative bead ring
 const beadRingUmum = document.getElementById('beadRingUmum');
@@ -203,6 +204,7 @@ tapCircle.addEventListener('contextmenu', e=> e.preventDefault());
 
 // Tap utama guna 'click' — sama pattern dengan skrin Khusus yang stabil
 tapCircle.addEventListener('click', ()=>{
+  if(gestureSwiped){ gestureSwiped = false; return; }
   if(longPressed){ longPressed = false; return; }
   bump();
 });
@@ -401,6 +403,7 @@ document.getElementById('targetSelect').addEventListener('click', ()=>{
 });
 
 document.getElementById('ringCenter').addEventListener('click', ()=>{
+  if(gestureSwiped){ gestureSwiped = false; return; }
   const ringCenter = document.getElementById('ringCenter');
   const t = targets[activeIdx];
 
@@ -443,6 +446,74 @@ document.getElementById('ringCenter').addEventListener('click', ()=>{
   renderRing();
   saveState();
 });
+
+// ---------- Swipe navigation (Umum <-> Khusus) ----------
+const SWIPE_THRESHOLD = 60; // px
+let swipePointerId = null;
+let swipeStartX = 0, swipeStartY = 0;
+
+function switchScreen(targetId){
+  if(deviceEl.classList.contains('nav-transitioning')) return; // guard: mid-transition
+  const current = document.querySelector('.screen.active');
+  if(!current || current.id === targetId) return; // no-op: already there / no screen in that direction
+  const next = document.getElementById(targetId);
+  if(!next) return;
+
+  const toKhusus = targetId === 'screen-khusus';
+  setActiveNavItem(targetId); // update bottom nav immediately, same as tap
+
+  deviceEl.classList.add('nav-transitioning');
+  next.classList.add(toKhusus ? 'nav-slide-right' : 'nav-slide-left'); // park off-screen
+  void next.offsetWidth; // force reflow: commit the off-screen start position
+  current.classList.add(toKhusus ? 'nav-slide-left' : 'nav-slide-right'); // exit
+  next.classList.remove('nav-slide-right', 'nav-slide-left'); // enter -> translateX(0)
+
+  let settled = false;
+  function finish(){
+    if(settled) return;
+    settled = true;
+    next.removeEventListener('transitionend', onDone);
+    deviceEl.classList.remove('nav-transitioning');
+    current.classList.remove('active', 'nav-slide-left', 'nav-slide-right');
+    next.classList.add('active');
+  }
+  function onDone(e){ if(e.target === next && e.propertyName === 'transform') finish(); }
+  next.addEventListener('transitionend', onDone);
+  setTimeout(finish, 400); // safety net if transitionend never fires (e.g. backgrounded tab)
+}
+
+deviceEl.addEventListener('pointerdown', (e)=>{
+  if(swipePointerId !== null) return; // already tracking a pointer — ignore multi-touch
+  if(e.target.closest('.target-list')) return; // let native horizontal card scroll work
+  if(document.querySelector('.sheet-overlay.open, .settings-overlay.open, .install-overlay.open')) return;
+  swipePointerId = e.pointerId;
+  swipeStartX = e.clientX;
+  swipeStartY = e.clientY;
+  gestureSwiped = false;
+});
+
+deviceEl.addEventListener('pointermove', (e)=>{
+  if(swipePointerId === null || e.pointerId !== swipePointerId || gestureSwiped) return;
+  const dx = e.clientX - swipeStartX;
+  const dy = e.clientY - swipeStartY;
+  if(Math.abs(dx) < SWIPE_THRESHOLD || Math.abs(dx) <= Math.abs(dy)) return;
+
+  clearTimeout(pressTimer);
+  tapCircle.classList.remove('holding');
+  gestureSwiped = true;
+  switchScreen(dx < 0 ? 'screen-khusus' : 'screen-umum');
+});
+
+function endSwipeTracking(e){
+  if(e.pointerId !== swipePointerId) return;
+  swipePointerId = null;
+  // Safety net: if a click never follows this drag (browsers don't always
+  // synthesize one after a large move), don't leave gestureSwiped stuck true
+  // forever — that would silently eat the *next*, unrelated tap.
+  if(gestureSwiped) setTimeout(()=>{ gestureSwiped = false; }, 50);
+}
+deviceEl.addEventListener('pointerup', endSwipeTracking);
+deviceEl.addEventListener('pointercancel', endSwipeTracking);
 
 const SOUND_ON = '<path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19 5a9 9 0 010 14M15.5 8.5a5 5 0 010 7"/>';
 const SOUND_OFF = '<path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M23 9l-6 6M17 9l6 6"/>';
