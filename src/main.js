@@ -113,6 +113,25 @@ function setScreenActive(screenEl, isActive){
   screenEl.inert = !isActive;
 }
 document.querySelectorAll('.screen').forEach(s=> setScreenActive(s, s.classList.contains('active')));
+
+// Warm up the inactive screen's decorative content once at load. Measured:
+// the very first swipe into Khusus (every fresh page load) drops a real
+// frame (~48ms) that swipes #2+ never do — Khusus's .stars background
+// (10 stacked radial-gradients) hadn't been painted/composited yet since its
+// screen sits at opacity:0 from load. Nudging opacity just off zero for one
+// frame forces that first paint to happen here, silently, instead of mid-
+// animation later. 0.001 is visually indistinguishable from 0.
+(function warmUpInactiveScreen(){
+  const inactive = document.querySelector('.screen:not(.active)');
+  if(!inactive) return;
+  inactive.style.opacity = '0.001';
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      inactive.style.opacity = '';
+    });
+  });
+})();
+
 document.querySelectorAll('.navitem').forEach(item=>{
   item.addEventListener('click', ()=>{
     setActiveNavItem(item.dataset.target);
@@ -491,6 +510,7 @@ function switchScreen(targetId){
     deviceEl.classList.remove('nav-transitioning');
     current.classList.remove('nav-slide-left', 'nav-slide-right');
     setScreenActive(current, false);
+    if(starsEl) starsEl.style.display = ''; // restore now that the slide has fully settled
   }
   function onDone(e){ if(e.target === next && e.propertyName === 'transform') finish(); }
   next.addEventListener('transitionend', onDone);
@@ -508,6 +528,8 @@ function switchScreen(targetId){
   });
 }
 
+const starsEl = document.querySelector('.stars');
+
 deviceEl.addEventListener('pointerdown', (e)=>{
   if(swipePointerId !== null) return; // already tracking a pointer — ignore multi-touch
   if(e.target.closest('.target-list')) return; // let native horizontal card scroll work
@@ -516,6 +538,13 @@ deviceEl.addEventListener('pointerdown', (e)=>{
   swipeStartX = e.clientX;
   swipeStartY = e.clientY;
   gestureSwiped = false;
+  // Measured: recalculating .stars' style (10 stacked radial-gradients) right
+  // at switchScreen()'s forced-layout instant caused a real ~48ms dropped
+  // frame every time — hiding it there was too late to avoid the cost, it
+  // just moved WHEN it got paid. Hiding it here instead, as soon as a touch
+  // starts (before we even know if this becomes a real swipe), gives the
+  // browser a few free frames to absorb that recalculation ahead of time.
+  if(starsEl) starsEl.style.display = 'none';
 });
 
 deviceEl.addEventListener('pointermove', (e)=>{
@@ -537,6 +566,9 @@ function endSwipeTracking(e){
   // synthesize one after a large move), don't leave gestureSwiped stuck true
   // forever — that would silently eat the *next*, unrelated tap.
   if(gestureSwiped) setTimeout(()=>{ gestureSwiped = false; }, 50);
+  // No real swipe happened (plain tap, or movement stayed below threshold) —
+  // switchScreen()'s finish() never runs to restore .stars, so do it here.
+  else if(starsEl) starsEl.style.display = '';
 }
 deviceEl.addEventListener('pointerup', endSwipeTracking);
 deviceEl.addEventListener('pointercancel', endSwipeTracking);

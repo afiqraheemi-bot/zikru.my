@@ -410,6 +410,19 @@
     opacity:0;
   }
 
+  /* .stars (Khusus only — 10 stacked radial-gradients as one background-image)
+     measured as the actual cause of a real dropped frame specifically when
+     entering Khusus (confirmed via frame-timing capture: ~49ms hitch).
+     Unlike the rings/bead-ring, opacity:0 does NOT fix this one — it's not a
+     cold-paint issue, it's the ongoing cost of compositing a 10-gradient
+     layer at all, which opacity:0 alone doesn't skip (measured: hitch still
+     there). display:none actually removes it from paint, and unlike the
+     always-rendered .screen elements, .stars has no children/layout of its
+     own worth keeping warm, so there's no new cold-start risk from this. */
+  .device.nav-transitioning .stars{
+    display:none;
+  }
+
   /* Skrin sempit (contoh: iPhone SE, Android kecil ~360px dan bawah) —
      bead-ring hiasan discale supaya tak sesak dengan tap-circle */
   @media (max-width: 374px){
