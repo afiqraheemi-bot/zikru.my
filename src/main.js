@@ -105,10 +105,18 @@ applyMood();
 function setActiveNavItem(targetId){
   document.querySelectorAll('.navitem').forEach(i=> i.classList.toggle('active', i.dataset.target === targetId));
 }
+// .screen is always rendered (never display:none, see app.css) so switching
+// never pays a cold first-layout/first-paint cost. `inert` keeps the hidden
+// screen's buttons out of tab order / screen readers without affecting paint.
+function setScreenActive(screenEl, isActive){
+  screenEl.classList.toggle('active', isActive);
+  screenEl.inert = !isActive;
+}
+document.querySelectorAll('.screen').forEach(s=> setScreenActive(s, s.classList.contains('active')));
 document.querySelectorAll('.navitem').forEach(item=>{
   item.addEventListener('click', ()=>{
     setActiveNavItem(item.dataset.target);
-    document.querySelectorAll('.screen').forEach(s=> s.classList.toggle('active', s.id === item.dataset.target));
+    document.querySelectorAll('.screen').forEach(s=> setScreenActive(s, s.id === item.dataset.target));
   });
 });
 
@@ -462,9 +470,10 @@ function switchScreen(targetId){
   const toKhusus = targetId === 'screen-khusus';
   setActiveNavItem(targetId); // update bottom nav immediately, same as tap
 
-  deviceEl.classList.add('nav-transitioning');
+  deviceEl.classList.add('nav-transitioning'); // JS re-entrancy guard only — no CSS depends on this class
   next.classList.add(toKhusus ? 'nav-slide-right' : 'nav-slide-left'); // park off-screen
-  void next.offsetWidth; // force layout: commit the off-screen start position
+  setScreenActive(next, true); // reveal (opacity:1) while still parked off-screen via transform
+  void next.offsetWidth; // commit the parked position before animating
 
   let settled = false;
   function finish(){
@@ -472,19 +481,17 @@ function switchScreen(targetId){
     settled = true;
     next.removeEventListener('transitionend', onDone);
     deviceEl.classList.remove('nav-transitioning');
-    current.classList.remove('active', 'nav-slide-left', 'nav-slide-right');
-    next.classList.add('active');
+    current.classList.remove('nav-slide-left', 'nav-slide-right');
+    setScreenActive(current, false);
   }
   function onDone(e){ if(e.target === next && e.propertyName === 'transform') finish(); }
   next.addEventListener('transitionend', onDone);
   setTimeout(finish, 500); // safety net if transitionend never fires (e.g. backgrounded tab)
 
-  // Double rAF: let the browser actually paint the "parked" off-screen state
-  // (a fresh display:none->flex layout for ~60 bead-ring elements) before
-  // starting the transform-to-0 transition. offsetWidth above only forces
-  // layout, not paint — on slower hardware the two can race, showing up as
-  // the bead-ring visibly catching up a frame or two after the rest of the
-  // screen has already started sliding.
+  // .screen is always rendered (opacity-based, see app.css) so there's no
+  // display:none->flex cold paint to race against anymore. Keep a cheap
+  // double rAF as a small safety margin before starting the actual
+  // transform-to-0 animation.
   requestAnimationFrame(()=>{
     requestAnimationFrame(()=>{
       current.classList.add(toKhusus ? 'nav-slide-left' : 'nav-slide-right'); // exit

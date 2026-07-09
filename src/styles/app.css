@@ -45,8 +45,19 @@
     min-height:780px;
     display:flex; flex-direction:column;
   }
-  .screen{ flex:1; display:none; flex-direction:column; padding:22px 20px 0; position:relative;}
-  .screen.active{display:flex;}
+  /* Always laid out + painted (never display:none) so switching screens never
+     pays a cold first-layout/first-paint cost — that cold-start was the real
+     cause of decorative content (bead-ring dots, ring-progress SVG circles)
+     visibly lagging behind the slide transition. Hidden via opacity+inert
+     instead, which keeps the subtree continuously rendered in the background. */
+  .screen{
+    flex:1; display:flex; flex-direction:column; padding:22px 20px 0;
+    position:absolute; inset:0;
+    opacity:0; pointer-events:none;
+    transition:transform 0.32s cubic-bezier(.22,.68,0,1.01);
+    will-change:transform;
+  }
+  .screen.active{ opacity:1; pointer-events:auto; }
 
   .stars{
     position:absolute; inset:0; pointer-events:none;
@@ -380,11 +391,8 @@
   }
 
   /* ---------- Swipe navigation (Umum <-> Khusus) ---------- */
-  .device.nav-transitioning .screen{
-    position:absolute; inset:0; display:flex;
-    transition:transform 0.32s cubic-bezier(.22,.68,0,1.01);
-    will-change:transform;
-  }
+  /* position/opacity/transition already live permanently on .screen above —
+     .nav-transitioning only gates JS re-entrancy now, no CSS depends on it. */
   .nav-slide-left{ transform:translateX(-100%); }
   .nav-slide-right{ transform:translateX(100%); }
 
