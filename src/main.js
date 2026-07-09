@@ -464,9 +464,7 @@ function switchScreen(targetId){
 
   deviceEl.classList.add('nav-transitioning');
   next.classList.add(toKhusus ? 'nav-slide-right' : 'nav-slide-left'); // park off-screen
-  void next.offsetWidth; // force reflow: commit the off-screen start position
-  current.classList.add(toKhusus ? 'nav-slide-left' : 'nav-slide-right'); // exit
-  next.classList.remove('nav-slide-right', 'nav-slide-left'); // enter -> translateX(0)
+  void next.offsetWidth; // force layout: commit the off-screen start position
 
   let settled = false;
   function finish(){
@@ -479,7 +477,20 @@ function switchScreen(targetId){
   }
   function onDone(e){ if(e.target === next && e.propertyName === 'transform') finish(); }
   next.addEventListener('transitionend', onDone);
-  setTimeout(finish, 400); // safety net if transitionend never fires (e.g. backgrounded tab)
+  setTimeout(finish, 500); // safety net if transitionend never fires (e.g. backgrounded tab)
+
+  // Double rAF: let the browser actually paint the "parked" off-screen state
+  // (a fresh display:none->flex layout for ~60 bead-ring elements) before
+  // starting the transform-to-0 transition. offsetWidth above only forces
+  // layout, not paint — on slower hardware the two can race, showing up as
+  // the bead-ring visibly catching up a frame or two after the rest of the
+  // screen has already started sliding.
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      current.classList.add(toKhusus ? 'nav-slide-left' : 'nav-slide-right'); // exit
+      next.classList.remove('nav-slide-right', 'nav-slide-left'); // enter -> translateX(0)
+    });
+  });
 }
 
 deviceEl.addEventListener('pointerdown', (e)=>{
