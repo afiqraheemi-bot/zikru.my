@@ -54,6 +54,7 @@
     flex:1; display:flex; flex-direction:column; padding:22px 20px 0;
     position:absolute; inset:0;
     opacity:0; pointer-events:none;
+    transform:translateZ(0); /* keep the 3D hint present even at rest, so the value never jumps between 2D/3D representations mid-transition */
     transition:transform 0.32s cubic-bezier(.22,.68,0,1.01);
     will-change:transform;
   }
@@ -391,10 +392,23 @@
   }
 
   /* ---------- Swipe navigation (Umum <-> Khusus) ---------- */
-  /* position/opacity/transition already live permanently on .screen above —
-     .nav-transitioning only gates JS re-entrancy now, no CSS depends on it. */
-  .nav-slide-left{ transform:translateX(-100%); }
-  .nav-slide-right{ transform:translateX(100%); }
+  /* position/opacity/transition for the sliding .screen itself already live
+     permanently on .screen above; .nav-transitioning is still used below to
+     hide decorative content for the transition's duration. */
+  .nav-slide-left{ transform:translateX(-100%) translateZ(0); }
+  .nav-slide-right{ transform:translateX(100%) translateZ(0); }
+
+  /* Decorative dot/bead rings are the one thing that visibly "smeared" during
+     a fast slide even with transform-only animation + will-change in place —
+     likely inherent motion-perception of many small high-contrast dots, not
+     something further compositing tuning can fix. Hide them for the duration
+     of the slide instead (instant, no transition, so there's no partial-
+     opacity smear either) — nothing visible left to smear. The numeric
+     readout (#ringCenter) is a separate element and stays visible throughout. */
+  .device.nav-transitioning .bead-ring,
+  .device.nav-transitioning #ringSvg{
+    opacity:0;
+  }
 
   /* Skrin sempit (contoh: iPhone SE, Android kecil ~360px dan bawah) —
      bead-ring hiasan discale supaya tak sesak dengan tap-circle */
