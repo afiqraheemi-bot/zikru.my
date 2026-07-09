@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zikru-my-v2';
+const CACHE_NAME = 'zikru-my-v3';
 const APP_SHELL = [
   './',
   './index.html',
