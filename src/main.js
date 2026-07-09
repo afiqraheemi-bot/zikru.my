@@ -471,9 +471,17 @@ function switchScreen(targetId){
   setActiveNavItem(targetId); // update bottom nav immediately, same as tap
 
   deviceEl.classList.add('nav-transitioning'); // JS re-entrancy guard only — no CSS depends on this class
+
+  // .screen's transition:transform is always-on now (screens are always
+  // rendered, never display:none) — so parking `next` off-screen would
+  // itself get animated instead of snapping instantly, briefly leaving both
+  // screens visible and overlapping mid-flight. Disable the transition just
+  // for this instant jump, then restore it before the real slide-in.
+  next.style.transition = 'none';
   next.classList.add(toKhusus ? 'nav-slide-right' : 'nav-slide-left'); // park off-screen
   setScreenActive(next, true); // reveal (opacity:1) while still parked off-screen via transform
-  void next.offsetWidth; // commit the parked position before animating
+  void next.offsetWidth; // commit the instant parked position
+  next.style.transition = ''; // restore the normal transition for the real slide-in below
 
   let settled = false;
   function finish(){
