@@ -33,7 +33,13 @@ function markInstalled(){
 }
 
 export function initInstallPrompt(){
-  if(isStandalone() || wasDismissedRecently()) return;
+  if(isStandalone()){
+    // Dah jalan sebagai app terpasang (dibuka dari skrin utama) — simpan kekal
+    // supaya popup tak keluar lagi walaupun dia buka balik guna browser tab lain kali.
+    markInstalled();
+    return;
+  }
+  if(wasDismissedRecently()) return;
 
   const overlay = document.getElementById('installOverlay');
   if(!overlay) return;
