@@ -81,6 +81,33 @@
   }
   .sheet-overlay.open .sheet{ transform:translateY(0); }
 
+  /* ---------- Install prompt (Add to Home Screen) ---------- */
+  .install-overlay{
+    position:absolute; inset:0; background:rgba(0,0,0,0.5);
+    opacity:0; pointer-events:none; transition:opacity 0.25s ease;
+    z-index:30;
+  }
+  .install-overlay.open{ opacity:1; pointer-events:auto; }
+  .install-overlay.open .sheet{ transform:translateY(0); }
+  .install-sheet{ position:relative; }
+  .install-close{
+    position:absolute; top:10px; right:16px; width:30px; height:30px;
+  }
+  .install-close svg{ width:14px; height:14px; }
+  .install-head{ display:flex; align-items:flex-start; gap:12px; margin-bottom:16px; padding-right:28px; }
+  .install-icon{ width:48px; height:48px; border-radius:12px; flex:0 0 auto; box-shadow:0 6px 18px rgba(0,0,0,0.3); }
+  .install-ios-steps{ display:flex; flex-direction:column; gap:10px; margin-bottom:18px; }
+  .install-step{
+    display:flex; align-items:center; gap:8px; font-size:13px; color:var(--parchment-dim);
+    background:var(--parchment-faint); border-radius:12px; padding:10px 12px;
+  }
+  .install-step strong{ color:var(--parchment); }
+  .install-step-num{
+    flex:0 0 auto; width:18px; height:18px; border-radius:50%; background:var(--card-border); color:var(--gold);
+    font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center;
+  }
+  .ios-share-icon{ width:14px; height:14px; flex:0 0 auto; }
+
   /* Settings overlay (reuses sheet styling) */
   .settings-overlay{ position:absolute; inset:0; background:rgba(0,0,0,0.45); opacity:0; pointer-events:none; transition:opacity 0.25s ease; z-index:25; }
   .settings-overlay.open{ opacity:1; pointer-events:auto; }

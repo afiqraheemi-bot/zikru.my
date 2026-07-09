@@ -1,4 +1,5 @@
 import './styles/app.css';
+import { initInstallPrompt } from './pwa-install.js';
 
 function escapeHtml(value){
   return String(value).replace(/[&<>"']/g, char => ({
@@ -713,3 +714,5 @@ if('serviceWorker' in navigator){
     navigator.serviceWorker.register(new URL('sw.js', window.location.href)).catch(()=>{});
   });
 }
+
+initInstallPrompt();
